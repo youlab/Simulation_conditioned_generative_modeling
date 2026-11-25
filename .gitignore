@@ -32,3 +32,95 @@ Readme_hfdataset.md
 /slurm_setup_data_40468402.err
 intrinsic_dimension_instance.py
 /seed_to_sim1_sim2_deterministic/slurm_scripts/intrinsic_dimension_calculation.sh
+/sim_generation/Slurm_scripts/Optimal_Patterns_32Tp.sh
+
+# Local analysis archive
+/Misc/
+
+# Manuscripts, submission documents, reviews and upload checklists stay local
+/Manuscript/
+
+# Generated Python cache directories
+**/__pycache__/
+
+# Research variants explicitly kept in place and excluded from the release
+/sim_to_exp_diffusion/controlnet_essential/cldm/area_constraint.py
+/sim_to_exp_diffusion/controlnet_essential/cldm/control_ldm_area.py
+/sim_to_exp_diffusion/controlnet_essential/models/cldm_v15_area.yaml
+/sim_to_exp_diffusion/controlnet_essential/pipeline_area.py
+/sim_to_exp_diffusion/controlnet_essential/simtoexp_train_area.py
+/sim_to_exp_diffusion/controlnet_essential/tests/test_area_constraint.py
+
+# Intermediate outputs of those local research variants
+/sim_to_exp_diffusion/controlnet_essential/checkpoints_area/
+/sim_to_exp_diffusion/controlnet_essential/image_logs_area/
+/sim_to_exp_diffusion/controlnet_essential/eval_fixed_area/
+/sim_to_exp_diffusion/controlnet_essential/eval_fixed_vfixed_seedcond/
+/sim_to_exp_diffusion/controlnet_essential/eval_fixed_seed_conditioned/
+/sim_to_exp_diffusion/controlnet_essential/training_logs_area/
+/sim_to_exp_diffusion/controlnet_essential/siamese_full_test_132/preprocessed/
+/sim_to_exp_diffusion/controlnet_essential/siamese_full_test_132/previous_notebook/
+/sim_to_exp_diffusion/controlnet_essential/replicate_variation_analysis/
+/source_data/inverse_evaluation/*/checkpoint_snapshot/
+/information_encoding_decoding/exp_test_colony_metrics.json
+
+# Siamese preparation/runtime cache; compact final scores are in source_data/siamese
+/sim_to_exp_diffusion/controlnet_essential/siamese_full_test_132/
+
+# Local figure previews
+/information_encoding_decoding/figures/
+
+# Public downloads and derived reproduction outputs
+/data/
+
+# Generated figures and vector exports (regenerate from the notebooks)
+**/vector based plots/
+*.pdf
+*.svg
+*.eps
+*.ps
+*.ai
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.gif
+*.webp
+# Upstream image-degradation test fixture is part of the code, not a figure export
+!/sim_to_exp_diffusion/controlnet_essential/ldm/modules/image_degradation/utils/test.png
+
+# Local documents, spreadsheets, data caches and model outputs
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.odt
+*.odp
+*.xls
+*.xlsx
+*.xlsm
+*.ods
+*.csv
+*.json
+*.npz
+*.npy
+*.pickle
+*.pkl
+*.tar
+*.ckpt
+*.pth
+*.pt
+
+# Detailed analysis, preparation tables and export audits stay local
+/source_data/*
+!/source_data/reference_metrics/
+/source_data/reference_metrics/*
+# Only the compact main-panel reference summaries are included
+!/source_data/reference_metrics/Fig4D_image_metrics.csv
+!/source_data/reference_metrics/Fig4D_CMMD.csv
+!/source_data/reference_metrics/Fig5F_inverse_metrics.csv
+!/source_data/reference_metrics/Fig5G_colony_area_metrics.csv
+
+# Required code configuration: pinned public HF assets and their checksums
+!/figure_generators/public_data_manifest.json
