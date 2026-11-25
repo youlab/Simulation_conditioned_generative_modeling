@@ -8,7 +8,11 @@ from models import UNet_Resblocks
 from expcolortoseed_dataset import MyDataset
 import os
 
-from utils.config import SPECIFIC_FOLDER_EXP_DIFFUSION_MORE, SPECIFIC_FOLDER_SEED_DIFFUSION_MORE
+from utils.config import (
+    SPECIFIC_FOLDER_EXP_DIFFUSION_MORE,
+    INVERSE_ABLATION_PHASE3_OUTPUT_ROOT,
+    INVERSE_ABLATION_SEED32_SUBFOLDER,
+)
 
 # configs 
 
@@ -17,7 +21,7 @@ from utils.config import SPECIFIC_FOLDER_EXP_DIFFUSION_MORE, SPECIFIC_FOLDER_SEE
 
 
 batch_size = 32
-learning_rate = 1e-4
+learning_rate = float(os.environ.get("EXPCOLORTOSEED_LEARNING_RATE", "1e-4"))
 dropout = 0.3  # Add dropout for regularization
 weight_decay = 1e-4  # L2 regularization
 # Candidate hyperparameter values for grid search
@@ -27,10 +31,28 @@ pos_weight = torch.tensor([pos_weight_value])
 features= [16,32,64]
 
 name = "Res_UNet_exps_color_vae_nonrandom_vDiffusion"
-version = f"lambda{lambda_}_pos{pos_weight_value}_GPUs_run7_features{features}_seeds_no_augmentation"
+run_suffix = os.environ.get(
+    "EXPCOLORTOSEED_RUN_SUFFIX",
+    "crop3left2right_seed32",
+)
+version = f"lambda{lambda_}_pos{pos_weight_value}_GPUs_run7_features{features}_seeds_no_augmentation_{run_suffix}"
+resume_checkpoint = os.environ.get("EXPCOLORTOSEED_RESUME_CHECKPOINT")
+log_version = version
+if resume_checkpoint:
+    if not os.path.isfile(resume_checkpoint):
+        raise FileNotFoundError(resume_checkpoint)
+    log_version = f"{version}_resume{os.environ.get('SLURM_JOB_ID', 'manual')}"
 model=UNet_Resblocks(in_channels=4, use_vae=True, features=features, learning_rate=learning_rate, lambda_=lambda_, pos_weight=pos_weight, dropout=dropout, weight_decay=weight_decay)
 
-dataset = MyDataset(use_vae=True, source_folder=SPECIFIC_FOLDER_EXP_DIFFUSION_MORE, target_folder=SPECIFIC_FOLDER_SEED_DIFFUSION_MORE, preprocess_input= 'None')
+# N30000 contains the three zero-angle targets/configuration, rebuilt directly
+# from original seeds with the 3-left/2-right crop. Reuse them without resizing.
+dataset = MyDataset(
+    use_vae=True,
+    source_folder=SPECIFIC_FOLDER_EXP_DIFFUSION_MORE,
+    target_folder=os.path.join(INVERSE_ABLATION_PHASE3_OUTPUT_ROOT, 'N30000', INVERSE_ABLATION_SEED32_SUBFOLDER),
+    preprocess_input='None',
+    target_preprocessed=True,
+)
 
 # Fix split to avoid augmentation leakage
 
@@ -52,7 +74,7 @@ num_gpus = 4
 num_workers = max(1, (os.cpu_count() or 1) // num_gpus)  # CPUs per DDP process
 train_loader= DataLoader(train_ds, num_workers=num_workers, batch_size=batch_size, shuffle=True, persistent_workers=True,pin_memory=True)
 val_loader= DataLoader(val_ds, num_workers=num_workers, batch_size=batch_size, shuffle=False, persistent_workers=True,pin_memory=True)
-loggers = [TensorBoardLogger("lightning_logs", name=name, version=version), CSVLogger("lightning_logs", name=name, version=version)]
+loggers = [TensorBoardLogger("lightning_logs", name=name, version=log_version), CSVLogger("lightning_logs", name=name, version=log_version)]
 
 callbacks = [
     ModelCheckpoint(dirpath=f"lightning_logs/{name}/{version}/checkpoints", monitor="val_loss", mode="min", save_top_k=1, save_last=True, filename="best-{epoch:03d}-{val_loss:.4f}"),
@@ -60,9 +82,9 @@ callbacks = [
     LearningRateMonitor(logging_interval="epoch"),
 ]
 
-trainer=   pl.Trainer(accelerator="gpu", devices=4, strategy="ddp", precision=32, max_epochs=500, logger=loggers, callbacks=callbacks)
+trainer=   pl.Trainer(accelerator="gpu", devices=4, strategy="ddp", precision=32, max_epochs=500, logger=loggers, callbacks=callbacks, enable_progress_bar=False)
 # Train!
-trainer.fit(model, train_loader, val_loader)
+trainer.fit(model, train_loader, val_loader, ckpt_path=resume_checkpoint)
 
 
 
