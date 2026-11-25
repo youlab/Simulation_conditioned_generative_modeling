@@ -4,13 +4,16 @@ import os
 import cv2
 import glob
 
-from utils.config import SEED_FOLDER_TEST_INFOENCODING_MORESEEDS, SPECIFIC_FOLDER_SEED_DIFFUSION_MORE
+from utils.config import (
+    SEED_FOLDER_TEST_INFOENCODING_MORESEEDS,
+    SPECIFIC_FOLDER_SEED_DIFFUSION_MORE_VFIXED,
+)
 from utils.preprocess import preprocess_seed
 
 # Load the sorted files from the seed folder
 
 SEED_DIR= SEED_FOLDER_TEST_INFOENCODING_MORESEEDS
-OUTPUT_DIR= SPECIFIC_FOLDER_SEED_DIFFUSION_MORE
+OUTPUT_DIR= SPECIFIC_FOLDER_SEED_DIFFUSION_MORE_VFIXED
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 seed_files= sorted(glob.glob(os.path.join(SEED_DIR, "*.png")))[:30000]
@@ -23,7 +26,7 @@ seed_files= sorted(glob.glob(os.path.join(SEED_DIR, "*.png")))[:30000]
 for file_idx, seed_file in enumerate(seed_files):
 
     # Preprocess the seed image
-    preprocessed_img = preprocess_seed(seed_file, left_crop=2, right_crop=3, img_length=32, img_width=32)
+    preprocessed_img = preprocess_seed(seed_file, left_crop=3, right_crop=2, img_length=32, img_width=32)
 
     # Get the base filename without extension
     base_filename = os.path.splitext(os.path.basename(seed_file))[0]

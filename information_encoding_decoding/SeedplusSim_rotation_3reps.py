@@ -10,17 +10,22 @@ import glob
 # This is to increase the datasize for training the model by a factor of 3, so that it matches with the experimental pipeline which uses the diffusion model predictions
 
 
-def process_seed_image(img_path, angle):
+def process_seed_image(img_path, angle, left_crop=2, right_crop=3):
     # Coordinate-based rotation method
     
     # Preprocess the seed image using preprocess_seed function # to make 32x32
     # note since we are already preprocessing the image here, we have to make sure no preprocessing at the time of dataset building 
-    img = preprocess_seed(img_path, top_crop=0, bottom_crop=0, left_crop=2, right_crop=3, img_length=32, img_width=32)
+    img = preprocess_seed(img_path, top_crop=0, bottom_crop=0, left_crop=left_crop, right_crop=right_crop, img_length=32, img_width=32)
     
     if img is None:
         print(f"Failed to preprocess image at {img_path}")
         return None
     
+    return rotate_seed_coordinates(img, angle)
+
+
+def rotate_seed_coordinates(img, angle):
+    """Existing coordinate rotation, also reusable on a preprocessed 32x32 seed."""
     # Binarize
     mask = (img > 0).astype(np.uint8)
     
