@@ -2,7 +2,7 @@
 import os
 import numpy as np
 import cv2
-from cldm.config import SEED_FOLDER_TRAIN_NONAUG, EXP_FOLDER_TRAIN_NONAUG, SPECIFIC_FOLDER_SEED
+from cldm.config import SEED_FOLDER_TRAIN_NONAUG, EXP_FOLDER_TRAIN_NONAUG, SPECIFIC_FOLDER_SEED_CORRECTED
 
 # Now augment for the seed folder
 
@@ -12,7 +12,7 @@ from cldm.config import SEED_FOLDER_TRAIN_NONAUG, EXP_FOLDER_TRAIN_NONAUG, SPECI
 
 
 
-def process_simulation_image(img, angle):
+def process_simulation_image(img, angle, left_crop=3, right_crop=2):
     # Find the center of the image (which is also the center of the inscribed circle)
 
     # img=cv2.imread(img)
@@ -21,8 +21,10 @@ def process_simulation_image(img, angle):
     theta = angle # Replace with your desired rotation angle # taskID varies bw 1-100
     theta_rad = np.deg2rad(theta)
 
-    # resize the image to 256x256 pixels
-    img= cv2.resize(img, (256, 256))
+    # Match seed-conditioned inference: crop the original 37x32 seed to 32x32
+    # before resizing it to the ControlNet input resolution.
+    img = img[:, left_crop:img.shape[1] - right_crop]
+    img = cv2.resize(img, (256, 256), interpolation=cv2.INTER_LINEAR)
 
     # List all image files in the folder
     # image_files = [f for f in os.listdir(folder_path) if f.endswith(('.png', '.jpg', '.jpeg'))]
@@ -63,7 +65,7 @@ augmentation_perimage= 100
 
 seed_folder = SEED_FOLDER_TRAIN_NONAUG
 experiment_folder_justchecking= EXP_FOLDER_TRAIN_NONAUG
-new_seed_folder= SPECIFIC_FOLDER_SEED
+new_seed_folder= SPECIFIC_FOLDER_SEED_CORRECTED
 
 # Ensure the new folder exists
 os.makedirs(new_seed_folder, exist_ok=True)
@@ -100,7 +102,6 @@ for filename in matched_files_total:
         cv2.imwrite(os.path.join(new_seed_folder, new_seed_filename), rotated_seed_img)
         
 print("Processing completed.")
-
 
 
 

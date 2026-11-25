@@ -5,11 +5,11 @@ import os
 
 from torch.utils.data import Dataset
 from cldm.preprocess import preprocess_experimental_backgroundwhite,preprocess_seed_graybackground
-from cldm.config import BASE_FOLDER, SPECIFIC_FOLDER_SEED, SPECIFIC_FOLDER_EXP
+from cldm.config import BASE_FOLDER, SPECIFIC_FOLDER_SEED_CORRECTED, SPECIFIC_FOLDER_EXP
 
 base_folder=BASE_FOLDER # place prompt_seedtoexp.json at this location from hf datasets
 base_folder_o=SPECIFIC_FOLDER_EXP
-base_folder_i=SPECIFIC_FOLDER_SEED
+base_folder_i=SPECIFIC_FOLDER_SEED_CORRECTED
 
 
 class MyDataset(Dataset):
@@ -32,7 +32,7 @@ class MyDataset(Dataset):
         source_path = os.path.join(base_folder_i,source_filename)
         target_path = os.path.join(base_folder_o,target_filename)
 
-        source = preprocess_seed_graybackground(source_path)
+        source = preprocess_seed_graybackground(source_path)  # files have already been preprocessed to be cropped and then 256x256
         target = preprocess_experimental_backgroundwhite(target_path)
 
     

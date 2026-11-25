@@ -67,14 +67,14 @@ model.sd_locked = sd_locked
 model.only_mid_control = only_mid_control
 
 
-tb_logger  = TensorBoardLogger(save_dir="tb_logs", name="controlnet_seedtoexp")
-csv_logger = CSVLogger(save_dir="csv_logs", name="controlnet_seedtoexp")
+tb_logger  = TensorBoardLogger(save_dir="tb_logs", name="controlnet_seedtoexp_v2")
+csv_logger = CSVLogger(save_dir="csv_logs", name="controlnet_seedtoexp_v2")
 
 # Misc
 dataset = MyDataset()
 dataloader = DataLoader(dataset, num_workers=0, batch_size=batch_size, shuffle=True)
 logger = ImageLogger(batch_frequency=logger_freq)
-fixed_cb = FixedEval(fixed_batch, every=300, outdir="eval_fixed", steps=30, eta=0.0, scale=9.0)
+fixed_cb = FixedEval(fixed_batch, every=300, outdir="eval_fixed_seed_conditioned", steps=30, eta=0.0, scale=9.0)
 trainer = pl.Trainer(gpus=1, precision=32, callbacks=[logger, fixed_cb], max_epochs=5)
 
 
