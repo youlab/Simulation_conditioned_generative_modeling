@@ -1,0 +1,120 @@
+{
+  "repo_id": "HotshotGoku/Simulation_templated_pattern_prediction",
+  "revision": "492e83b9ccf2f086c5e33e9588468b43b4c263ee",
+  "vae_revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+  "clip_revision": "ce19dc912ca5cd21c8a653c79e251e808ccabcd1",
+  "files": {
+    "information_encoding_decoding/Exp_testset_fixed.tar": {
+      "bytes": 2795520,
+      "sha256": "b3b412fef864ccbb77ec9bd3ec323715ca6aca651c499c6e884fc4ef3497ae55"
+    },
+    "information_encoding_decoding/Exp_testset_fixed_seed.tar": {
+      "bytes": 40960,
+      "sha256": "3a264e50f47769018c6d284b90b72c2a7ae29960766ea5ba650fefab7dc1c8a5"
+    },
+    "information_encoding_decoding/Exp_testset_seed.tar": {
+      "bytes": 102400,
+      "sha256": "be4b9942b333afe4fd62ce1c9e88642a676af8337d9dae0779e65d746c036d5c"
+    },
+    "information_encoding_decoding/Generated_patterns_selected.tar": {
+      "bytes": 1669120,
+      "sha256": "d3d389005863d9ad93262fab7298d800fc6f1e2d59b63156d15494771c9f478b"
+    },
+    "information_encoding_decoding/checkpoint_colonyarea.tar": {
+      "bytes": 335728640,
+      "sha256": "e10e85157ce6c742f4acbb4f5134c3f66504453c58e0e74045eda8ec044a0e0c"
+    },
+    "information_encoding_decoding/checkpoint_exptoseed.tar": {
+      "bytes": 340899840,
+      "sha256": "2b8f22b145c3f98fd03ec0f6d1a61638e3af9a17cf20b9d2661ba1e99013e051"
+    },
+    "information_encoding_decoding/checkpoint_simtoseed.tar": {
+      "bytes": 340899840,
+      "sha256": "31799229d54a7b4cba06357a4d92e1f2ffb9df680b371dd8b37318b2e16ee55a"
+    },
+    "information_encoding_decoding/inverse_predictions_main.tar": {
+      "bytes": 1034240,
+      "sha256": "c79d0d5c424308de483a10b3a561721eb9085b7bf6e0d8ebdb2539097755e504"
+    },
+    "seed_to_sim_deterministic/ARIAL.TTF": {
+      "bytes": 1047208,
+      "sha256": "74d696e666f696e93db685a85c94bfbfcc0796dfcf8a2e2e2e2c908a54e82949"
+    },
+    "seed_to_sim_deterministic/Sim_050924_ModelTesting_complex_Tp3.tar": {
+      "bytes": 71680,
+      "sha256": "8737939eb194b244cd48d79ed745f72f61754def2124697154e1b73009af183e"
+    },
+    "seed_to_sim_deterministic/Sim_050924_ModelTesting_intermediate_Tp3.tar": {
+      "bytes": 40960,
+      "sha256": "a0d1041aff9324afd04071eb3b1d1e46cfca48aa73863fa09a256ffdf8d61f4d"
+    },
+    "seed_to_sim_deterministic/Sim_050924_ModelTesting_seed.tar": {
+      "bytes": 10240,
+      "sha256": "bdcee2aa20541ea6d1e860e7b54e82ee93a195c6a19087a05d66a4152a8c39ac"
+    },
+    "seed_to_sim_deterministic/Sim_050924_complex_Tp3.tar": {
+      "bytes": 583127040,
+      "sha256": "3dde2c8a068c927e55508b06b14439f7ece0064e48106bc289d698fbc3d835db"
+    },
+    "seed_to_sim_deterministic/Sim_050924_intermediate_Tp3.tar": {
+      "bytes": 370769920,
+      "sha256": "4357426a2f4712779ba736b48c3f3d4cbfe2ddcd89ea84cae2d3505237d5624a"
+    },
+    "seed_to_sim_deterministic/Sim_050924_seed.tar": {
+      "bytes": 77117440,
+      "sha256": "c4ec0fad359c6caf695364acfe1f3fe5998bc88edf4f99f1ad351a244c4a2114"
+    },
+    "seed_to_sim_deterministic/Sim_050924_seed_counts_testset_60000_70000.json": {
+      "bytes": 324140,
+      "sha256": "4cf92c511217f88d6599dfba7d1ea5a5f8b3da9b6eb9d0feede5ffab385d917a"
+    },
+    "seed_to_sim_deterministic/logs_selected.tar": {
+      "bytes": 256000,
+      "sha256": "0ceb192c17e205da663427e7eda19d846c681a2529f3fd9e8c6c3c4a2e3e2a3a"
+    },
+    "seed_to_sim_deterministic/saved_models.tar": {
+      "bytes": 238571520,
+      "sha256": "0b99b072a9601e9455180ad02ed9a7398dff5c0b40a213dbb457f8e3d03b1cb8"
+    },
+    "sim_to_exp_diffusion/Exp.tar": {
+      "bytes": 696924160,
+      "sha256": "59a22b54c95e62c98989d606e82ac0b9dc2b11c804992152791cf0cbdcf63d31"
+    },
+    "sim_to_exp_diffusion/Exp_SimcorrtoExp_seed.tar": {
+      "bytes": 430080,
+      "sha256": "ce2dd67d15a1f78b771f477caa410c2db6265226dbd11c1b6c5b99322ed03027"
+    },
+    "sim_to_exp_diffusion/Exp_SimcorrtoExp_testset_seed.tar": {
+      "bytes": 102400,
+      "sha256": "1007575ae1bf22014b31caa8c94b14e236d6433872b742fbd53887f326994043"
+    },
+    "sim_to_exp_diffusion/Exp_testset.tar": {
+      "bytes": 18974720,
+      "sha256": "9de31d8ee028eb1d5cb7d3802115e45865812a055485b35615056ccf0c53ec8b"
+    },
+    "sim_to_exp_diffusion/SimcorrtoExp.tar": {
+      "bytes": 1853440,
+      "sha256": "696b3ef1fd96bdbd539cee20ac2e1d352564dd91ac047640731c815cc552e769"
+    },
+    "sim_to_exp_diffusion/SimcorrtoExp_testset.tar": {
+      "bytes": 450560,
+      "sha256": "16bb65da34e16b574e9d251b9193e2a52a9bd2277b0c8a6dd01cf2363c945485"
+    },
+    "sim_to_exp_diffusion/combined_seed_counts_testset_132.json": {
+      "bytes": 2591,
+      "sha256": "363388a59f58e51178e2e841847cbf701a48c1d6ef850321eb9e2ff8908da906"
+    },
+    "sim_to_exp_diffusion/fixed_testset_predictions.tar": {
+      "bytes": 4024320,
+      "sha256": "a75bc26d2278185596df87cbe0371a9f8ee16a8dda4dcf0148d9edaabcc07796"
+    },
+    "sim_to_exp_diffusion/fixed_testset_simulations.tar": {
+      "bytes": 153600,
+      "sha256": "918f48975832ba0bccadb22ec14d72e5042b8f84996feb956a13da03c3f93cc2"
+    },
+    "sim_to_exp_diffusion/inference_folders.tar": {
+      "bytes": 227614720,
+      "sha256": "6c8618ad902da69be24bf5356775d0025be4340c55ad49a8e0645bc9b1fb3478"
+    }
+  }
+}
