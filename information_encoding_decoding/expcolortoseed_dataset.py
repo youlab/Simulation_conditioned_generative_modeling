@@ -15,7 +15,7 @@ target_folder= SPECIFIC_FOLDER_SEED_DIFFUSION_MORE
 
 
 class MyDataset(Dataset):
-    def __init__(self, source_folder:str=SPECIFIC_FOLDER_EXP_DIFFUSION_MORE, target_folder:str=SPECIFIC_FOLDER_SEED_DIFFUSION_MORE, start:int=0,end:int=None, use_vae=False, preprocess_method=cv2.INTER_NEAREST,preprocess_input="backgroundwhite"):
+    def __init__(self, source_folder:str=SPECIFIC_FOLDER_EXP_DIFFUSION_MORE, target_folder:str=SPECIFIC_FOLDER_SEED_DIFFUSION_MORE, start:int=0,end:int=None, use_vae=False, preprocess_method=cv2.INTER_NEAREST,preprocess_input="backgroundwhite", target_preprocessed=False):
         # Store full paths to avoid repeated path joining
         # choose the first N files for consistency
         if end is None:
@@ -25,6 +25,7 @@ class MyDataset(Dataset):
         self.target_files = natsorted([os.path.join(target_folder, f) for f in os.listdir(target_folder)])[start:end]
         self.preprocess_method= preprocess_method
         self.preprocess_input= preprocess_input
+        self.target_preprocessed = target_preprocessed
         
         # Sanity check
         assert len(self.source_files) == len(self.target_files), \
@@ -47,7 +48,12 @@ class MyDataset(Dataset):
             source= cv2.cvtColor(source, cv2.COLOR_BGR2RGB)  # convert to RGB for consistency with previous preprocessing
             source= cv2.resize(source, (256,256)) # already 256x256, just resizing for consistency 
 
-        if self.use_vae== False:
+        if getattr(self, 'target_preprocessed', False):
+            # Native 32x32 labels: no resizing, thresholding, or additional crop.
+            target = cv2.imread(target_path, cv2.IMREAD_GRAYSCALE)
+            if target is None or target.shape != (32, 32):
+                raise ValueError(f'Expected a native 32x32 seed target: {target_path}')
+        elif self.use_vae== False:
             target = preprocess_seed(target_path, method=self.preprocess_method)
         else:
             target = preprocess_seed(target_path, img_length=32, img_width=32)  # VAE latent size
@@ -72,4 +78,4 @@ class MyDataset(Dataset):
 
 
 
-       
+
