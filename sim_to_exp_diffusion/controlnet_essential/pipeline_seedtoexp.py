@@ -26,7 +26,9 @@ yaml_config = "./models/cldm_v15.yaml"           # YAML configuration file
 # ------------------------------
 config_yaml = OmegaConf.load(yaml_config)
 params = OmegaConf.to_container(config_yaml.model.params, resolve=True)
-model = ControlLDM.load_from_checkpoint(CKPT_PATH_SEEDTOEXP, **params)
+checkpoint_path = os.environ.get("SEEDTOEXP_CKPT_PATH", CKPT_PATH_SEEDTOEXP)
+print(f"Loading seed-conditioned checkpoint: {checkpoint_path}", flush=True)
+model = ControlLDM.load_from_checkpoint(checkpoint_path, **params)
 
 model = model.cuda()
 
