@@ -1,0 +1,17 @@
+Source: https://github.com/sayakpaul/cmmd-pytorch
+Commit: f7673a9f46320ac958878c19f7686e203376ad9d
+Local source: /hpc/dctrl/ks723/cmmd (used by Slurm_scripts/cmmd.sh)
+
+The distance.py, embedding.py, io_util.py, and LICENSE files are copied
+byte-for-byte from the existing checkout. No metric, preprocessing, or
+batching code has been rewritten. The package __init__.py files only allow
+normal Python imports from this repository.
+
+The io_util.py docstring mentions dropping the remainder, but the actual
+PyTorch DataLoader does not set drop_last=True and includes every image.
+
+SHA-256:
+c438101449ba9260cb50eb925c579d01c4bf26d69acbae81f8954aaed880ec70  distance.py
+dcb581628c976d44a291ff17d60244a73514e241ad0ef9b0906f8ca0b6cb737d  embedding.py
+ff9a78fe6cfeb09d3c6d2321425ffd8970552f3c3b6b41cc3535a42dbd3cfa11  io_util.py
+c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4  LICENSE
