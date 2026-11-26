@@ -28,10 +28,6 @@
       "bytes": 340899840,
       "sha256": "2b8f22b145c3f98fd03ec0f6d1a61638e3af9a17cf20b9d2661ba1e99013e051"
     },
-    "information_encoding_decoding/checkpoint_simtoseed.tar": {
-      "bytes": 340899840,
-      "sha256": "31799229d54a7b4cba06357a4d92e1f2ffb9df680b371dd8b37318b2e16ee55a"
-    },
     "information_encoding_decoding/inverse_predictions_main.tar": {
       "bytes": 1034240,
       "sha256": "c79d0d5c424308de483a10b3a561721eb9085b7bf6e0d8ebdb2539097755e504"

@@ -45,7 +45,7 @@ We test the diffusion generation framework with a synthetic-to-real task predict
     python reproduce_figures.py --output ./figure_outputs/main
     ```
 
-    Setup downloads the public Hugging Face datasets and checkpoints to `DATA_DIR`. A GPU is recommended. To generate selected figures, add `--figures 1 3 5` to the second command.
+    Setup downloads the public Hugging Face datasets and checkpoints to `DATA_DIR`, extracting only the files needed for the main figures. A GPU is recommended. To generate selected figures, add `--figures 1 3 5` to the second command.
 
 3) For model re-training: All data needed is [here](https://huggingface.co/datasets/HotshotGoku/Simulation_templated_pattern_prediction).
 
@@ -313,7 +313,7 @@ The corresponding scripts in `Slurm_scripts/` launch data preparation, training 
 - `paper_paths.py`: Keeps saved analysis tables and local exploratory files in consistent locations.
 - `figure_generators/main_figures.py`: Lists the main panels, their source notebooks and expected output files.
 - `figure_generators/notebook_runner.py`: Runs the notebook cells needed for each main panel and saves its figures.
-- `figure_generators/public_data.py`: Downloads and extracts the public HF files, checking their recorded checksums.
+- `figure_generators/public_data.py`: Downloads public HF archives, checks their checksums and extracts only the main-figure files.
 - `figure_generators/public_data_manifest.json`: Records the HF dataset revision, filenames and checksums used for reproduction.
 - `figure_generators/public_results.py`: Recomputes the figure measurements using the existing analysis functions and public inputs.
 - `figure_generators/vae_overview.py` and `seed_surrogate.py`: Generate the VAE and seed-to-simulation panels.

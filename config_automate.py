@@ -10,7 +10,7 @@ from pathlib import Path
 REPO_DIR = Path(__file__).resolve().parent
 # The only path you need to change. For example:
 # DATA_DIR = Path("/your/preferred/data/location")
-DATA_DIR = REPO_DIR / "data"  # Default: the data folder inside this repository.
+DATA_DIR = Path("/hpc/group/youlab/ks723/storage/Physics_constrained_DL_pattern_prediction/Newanalysis_figuretest")
 
 # Optional override used by --data-dir; otherwise use the setting above.
 if "PATTERN_DATA_DIR" in os.environ:

@@ -112,7 +112,7 @@ def check_task(task):
     return steps
 
 
-def install_local_results_guard():
+def install_local_results_guard(data_dir=None):
     forbidden = ['/hpc/group/youlab/ks723/storage/',
                  '/hpc/group/youlab/ks723/miniconda3/Lingchong/',
                  '/hpc/group/youlab/ks723/miniconda3/saved_models/',
@@ -121,9 +121,13 @@ def install_local_results_guard():
     for family in ('information_encoding_decoding', 'sim_to_exp_diffusion/controlnet_essential'):
         forbidden.extend(str(ROOT / family / part) + '/' for part in ('inference', 'lightning_logs'))
 
+    allowed = str(Path(data_dir).resolve()) if data_dir is not None else None
+
     def guard(event, args):
         if event in ('open', 'os.listdir', 'os.scandir') and args and isinstance(args[0], (str, bytes, os.PathLike)):
             path = os.path.abspath(os.fsdecode(args[0]))
+            if allowed is not None and (path == allowed or path.startswith(allowed + os.sep)):
+                return
             if any(path.startswith(prefix) for prefix in forbidden):
                 raise PermissionError('Public reproduction cannot read local research results: ' + path)
     sys.addaudithook(guard)
@@ -141,7 +145,8 @@ def run_task(task, output_dir):
     os.environ['PATTERN_VAE_REVISION'] = release['vae_revision']
     os.environ['PATTERN_CLIP_REVISION'] = release['clip_revision']
     if os.environ.get('PATTERN_DENY_HPC_RESULTS') == '1':
-        install_local_results_guard()
+        from config_automate import DATA_DIR
+        install_local_results_guard(DATA_DIR)
 
     import matplotlib
     matplotlib.use('Agg')
@@ -192,6 +197,11 @@ def run_task(task, output_dir):
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(seed)
 
+    receipt_path = Path(config_automate.DATA_DIR) / 'public_data_receipt.json'
+    receipt = json.loads(receipt_path.read_text()) if receipt_path.is_file() else {}
+    original_orders = {str((config_automate.EXTRACTED_DIR / folder).resolve()): names
+                       for folder, names in receipt.get('file_orders', {}).items()}
+
     namespace = {'__name__': '__main__', 'np': np, 'pd': pd, 'plt': plt,
                  'Path': Path, 'display': lambda *args, **kwargs: None}
     produced = set()
@@ -227,6 +237,7 @@ def run_task(task, output_dir):
     figure_exports.save_images_only_pdf = lambda fig, path, **kw: export(fig, path, mode='images_only', **kw)
     plt.show = lambda *args, **kwargs: None  # retain the actual notebook artists
     namespace['_export_figure'] = export
+    namespace['_original_order'] = lambda folder: original_orders.get(str(Path(folder).resolve()))
 
     def load_image_metrics():
         from .public_results import image_metrics
@@ -258,6 +269,11 @@ def run_task(task, output_dir):
             print(f'[{task.key}] {task.notebook}: cell {index or "adapter"}', flush=True)
             tree = ast.parse(source)
             for node in ast.walk(tree):
+                if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                        and node.func.id in ('preprocess_simulation_input_data', 'preprocess_simulation_output_data')
+                        and len(node.args) == 3 and not any(k.arg == 'img_filenames' for k in node.keywords)):
+                    node.keywords.append(ast.keyword(arg='img_filenames', value=ast.Call(
+                        func=ast.Name(id='_original_order', ctx=ast.Load()), args=[node.args[0]], keywords=[])))
                 if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
                     if isinstance(node.func.value, ast.Name) and (node.func.value.id, node.func.attr) == ('torch', 'load') and not any(k.arg == 'map_location' for k in node.keywords):
                         node.keywords.append(ast.keyword(arg='map_location', value=ast.Constant('cpu')))
