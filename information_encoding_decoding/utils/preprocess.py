@@ -827,3 +827,39 @@ def preprocess_seed(seed_path,top_crop=0, bottom_crop=0, left_crop=0, right_crop
     new_array_i = cv2.resize(new_array_i, (img_width, img_length), interpolation=method)
 
     return new_array_i
+
+
+def preprocess_ablation_grayscale(image):
+    """Convert an RGB image to grayscale and return three identical channels."""
+    grayscale = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    return cv2.cvtColor(grayscale, cv2.COLOR_GRAY2RGB)
+
+
+def preprocess_ablation_binary(image):
+    """Apply the existing 5 x 5 blur and threshold-110 binary preprocessing."""
+    grayscale = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    blurred = cv2.GaussianBlur(grayscale, (5, 5), 0)
+    _, binary = cv2.threshold(blurred, 110, 255, cv2.THRESH_BINARY)
+    return cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
+
+
+def preprocess_ablation_gaussian(image, sigma):
+    """Apply Gaussian smoothing to an RGB image using sigma in pixels."""
+    if sigma is None or sigma <= 0:
+        raise ValueError("sigma must be greater than zero")
+    return cv2.GaussianBlur(image, (0, 0), sigmaX=sigma, sigmaY=sigma)
+
+
+def preprocess_ablation_bilateral(
+    image,
+    diameter=10,
+    sigma_color=75,
+    sigma_space=75,
+):
+    """Smooth similar colors within a neighborhood while preserving strong edges."""
+    return cv2.bilateralFilter(
+        image,
+        d=diameter,
+        sigmaColor=sigma_color,
+        sigmaSpace=sigma_space,
+    )
