@@ -1,0 +1,4 @@
+comparison,subset,n_reference,n_target,cmmd
+exp_sim,all,132,132,2.9630661010742188
+exp_pred,all,132,132,0.7370710372924805
+sim_pred,all,132,132,4.009008407592773
