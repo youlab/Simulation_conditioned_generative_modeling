@@ -124,3 +124,6 @@ intrinsic_dimension_instance.py
 
 # Required code configuration: pinned public HF assets and their checksums
 !/figure_generators/public_data_manifest.json
+
+# Local automated checks; not required for figure generation
+/tests/
