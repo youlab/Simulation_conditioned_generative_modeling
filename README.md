@@ -31,27 +31,23 @@ We test the diffusion generation framework with a synthetic-to-real task predict
 
 ### Note (if you wanted to work with this repo): 
 
-1) Clone this repository using git clone. Then install the conda environment file. All of the python libraries that were used to run scripts from both folders are in the  conda environment file pytorch_PA_patternprediction.yml file(might contain unnecessary libraries to the current code implementation). Run
-    ```
+1) Clone this repository and create the Conda environment:
+
+    ```bash
     conda env create -f pytorch_PA_patternprediction.yml
+    conda activate pytorch_PA_patternprediction
     ```
 
-2) To reproduce the main figures (model inference) in the paper, you need to do the following:
+2) To reproduce the main figures (Figures 1–5), set `DATA_DIR` in `config_automate.py` to your data storage location, then run:
 
-    i) Change the DATA_DIR to your defined directory in config_automate.py
+    ```bash
+    python setup_data.py
+    python reproduce_figures.py --output ./figure_outputs/main
+    ```
 
-    ii) Run: 
+    Setup downloads the public Hugging Face datasets and checkpoints to `DATA_DIR`. A GPU is recommended. To generate selected figures, add `--figures 1 3 5` to the second command.
 
-        python setup_data.py
-    This will download all datasets, model checkpoints and other necessary dependencies.It might take a while, for me it took 2-3 hours on the DCC using GPU nodes.  
-    iii) Run 
-
-        python reproduce_figures.py  # for all figures
-    OR 
-        
-        python reproduce_figures.py --figures 1 3 5 # if needed for specific figures you want
-
-3) For model re-training: All data needed is [here](https://huggingface.co/datasets/HotshotGoku/Physics_constrained_DL_pattern_prediction).
+3) For model re-training: All data needed is [here](https://huggingface.co/datasets/HotshotGoku/Simulation_templated_pattern_prediction).
 
     i) Download files from Huggingface datasets. Extract the tar files. 
 
@@ -67,7 +63,7 @@ We test the diffusion generation framework with a synthetic-to-real task predict
     
     vi) Running the Figure 6 pipeline would require generating a large synthetic dataset. For this you can run 'batch_infer_Inf_ed_MORE_3x30000.py' in parallel processing, which can be done in about 2 hours total using the setup provided. For the Supplementary Figure 20, which uses simulations, the base simulation dataset is same as Figure 2, and can be augmented by rotations using the script SeedplusSim_rotation_3reps.py. 
 
-Note: Steps i) and iii) are executed by default with setup_data.py. You can save time, but you need to update the config files under utils.config and cldm.config accordingly. The slurm scripts that were used to run the python files on the Duke computing cluster have also been attached for your reference. You can modify the gpu nodes and file locations appropriately. 
+For retraining, update the paths in `utils/config.py` and `cldm/config.py`. The provided SLURM scripts can be adapted to your cluster.
 
      
 4) (If you need to further fine-tune) We downloaded the [Stable Diffusion v1-5 checkpoint](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/blob/main/v1-5-pruned.ckpt) and attached the ControlNet to the pre-trained network by running 
@@ -249,31 +245,82 @@ More code details:
 - `Patterns_generator_experimental.m` is the script used to generate 1000 random seeding grids for experimental MANTIS seeding configurations. Corresponding to this we generate analogous simulation seeds in `SimulatedGridMATgeneration.m` .These simulated input seeding grids are saved in `simulatedPatterns.mat`, and are simulated using the DCC in `Optimal_Patterns_ExperimentalCondns.m`. Note that the way in which the input seeding grids for experiments were generated, they resulted in a random configuration. Similar procedure is applied for fixed, pre-defined seeding configurations that are stored in `simulatedPatterns_Fixed.mat` and simulation seeds are generated in `ExptoSim_MAT.m` with end-point patterns stored in `Optimal_Patterns_ExperimentalCondns_Fixedgrid.m`. 
 - `Parameters_multiseeding.mat` and `Branching_diffusion.m` are files unchanged from the original implementation in the MSB 2021 paper, essentially containing various parameters for establishing certain parameters and diffusion processes in the model.
 
+### Added and renamed files
 
+**`seed_to_sim1_sim2_deterministic/`**
 
+- `Image_grids_SuppFig3_4_5_8_9_13_14.ipynb`: Displays the seed, pattern and latent-image grids used in the supplementary figures.
+- `SSIM_ExpandSim_SuppFig2.ipynb`: Compares original patterns with their VAE reconstructions using SSIM.
+- `Prediction_seedtointermediate_dilResNet_Fig2_SuppFig7.ipynb`: Predicts simulated patterns from initial seeds and displays the selected examples.
+- `Scatterplot_SSIM_seedvariation_Fig2.ipynb`: Plots prediction accuracy against seed count and shows representative predictions.
+- `Prediction_datademand_intermediatetocomplex_Fig3.ipynb`: Examines how prediction improves with more unique training configurations.
+- `Prediction_datademand_augmentation_intermediatetocomplex_Fig3.ipynb`: Examines the effect of data augmentation on the same prediction task.
 
+**`sim_to_exp_diffusion/controlnet_essential/`**
 
+- `plot_Fig4_SuppFig17.ipynb`: Displays experimental patterns alongside simulation-conditioned and seed-conditioned predictions.
+- `morphometric_variation_analysis.ipynb`: Compares branch widths, tips, skeleton lengths and replicate variation across experiments, simulations and generated patterns.
+- `morphometric_variation_analysis_seed_conditioned.ipynb`: Compares these measurements between simulation-conditioned and seed-conditioned generation.
+- `morphometric_expsimdiff_display_SuppFig15A.ipynb`: Shows colony images with their measured skeletons and branch tips overlaid.
+- `morphometric_feature_analysis_fourier.ipynb`: Compares spatial scales in experimental, simulated and generated patterns using Fourier spectra.
+- `replicate_variation_SuppFig16.ipynb`: Compares differences between experimental replicates with differences between generated samples.
+- `image_metric_evaluation.py`: Calculates LPIPS, SSIM, ORB and CMMD on the matched 132-image test set.
+- `third_party/cmmd_pytorch/`: Contains the original CMMD implementation used by the image-metric evaluation.
+- `prepare_siamese_full_test.py`: Prepares the matched images and replicate pairs for the Siamese similarity analysis.
+- `colony_metrics_downstreammodel.py`: Creates the colony-area and boundary-tip labels used to train the downstream model.
+- `generate_combined_seed_counts.py`: Combines the primary and fixed-test seed counts, using white-pixel counts for fixed seed grids.
+- `batch_infer_seedtoexp_fixed.py`: Generates seed-conditioned patterns for the 19 fixed test configurations.
+- `batch_infer_seedtoexp_original96_corrected.py`: Generates corrected seed-conditioned predictions for the original 96 test images.
+- `batch_infer_Inf_ed_MORE_3x30000_seed.py`: Generates seed-conditioned synthetic patterns for the inverse-model comparisons.
+- `cldm/morpho_features.py`: Extracts colony skeletons and measures their branches and tips.
+- `cldm/colony_graph.py`: Builds a graph of branches and junctions from a colony skeleton.
+- `cldm/biological_metrics.py`: Measures branches after nearby junctions are grouped into shared hubs.
+- `cldm/colony_branching_metrics.py`: Provides additional branching-angle measurements from colony graphs.
+- `cldm/display.py`: Draws skeleton and branch-measurement overlays on colony images.
+- `cldm/seed_counts.py`: Loads seed counts and handles the `>26` category used in the plots.
 
+**`information_encoding_decoding/`**
 
+- `Display_Fig5_SuppFig23.ipynb`: Displays generated training examples and seed predictions from the inverse models.
+- `Evaluation_metrics_Fig5.ipynb`: Plots the inverse-model error, precision, recall and F1 comparisons in Figure 5F.
+- `Evaluation_colonyarea_Fig5G.ipynb`: Evaluates colony-area predictions on experimental images and plots Figure 5G.
+- `Evaluation_seedconditioning_SuppFig18.ipynb`: Compares seed recovery by models trained on simulations and the two types of generated patterns.
+- `Evaluation_ablation_expandsyn_SuppFig24.ipynb`: Compares different training-set sizes and mixtures of real and synthetic data.
+- `Evaluation_ablation_pertubation_SuppFig24.ipynb`: Tests how grayscale, thresholding and smoothing of training images affect seed recovery.
+- `Evaluation_realtosynthetic_SuppFig24.ipynb`: Tests a decoder trained on real experiments against generated patterns.
+- `inventory_inverse_training_data.py`: Lists available experimental plates and selects seeding configurations for the data-size comparisons.
+- `prepare_inverse_experimental_data.py`: Builds experimental image–seed training pairs using rotation augmentation.
+- `prepare_inverse_synthetic_data.py`: Builds synthetic image–seed training pairs for different numbers of unique configurations.
+- `prepare_inverse_grouped_splits.py`: Separates training and validation data by seeding configuration to prevent overlap.
+- `prepare_inverse_mixture_splits.py`: Prepares the real/synthetic data mixtures while keeping the total sample count fixed.
+- `prepare_inverse_seed_targets_32x32.py`: Builds 32×32 seed targets using the original coordinates and recorded rotations.
+- `train_inverse_learning_curves.py`: Trains inverse models with different numbers of unique experimental or synthetic configurations.
+- `train_inverse_mixtures.py`: Trains inverse models with 25%, 50% or 75% real data and the remainder synthetic.
+- `inverse_evaluation.py`: Provides the shared checkpoint evaluation used by the inverse-model comparison notebooks.
+- `expcolortoseed_dataset_ablation.py`: Applies the grayscale, thresholding and smoothing controls to inverse-model training images.
+- `expcolortoseed_vae_train_GPUs_ablation.py`: Trains the inverse models used for those image-processing controls.
+- `expcolortoseed_seedcond_corrected_train.py`: Trains the inverse decoder on seed-conditioned patterns with corrected seed targets.
+- `colonyarea_dataset.py`: Loads colony images and their measured area labels for training and evaluation.
+- `colonyarea_vae_train_GPUs.py`: Trains the VAE–ResNet model used for colony-area prediction.
+- `models/ResNet.py`: Defines the colony-area prediction network; its existing tip-count head is retained for checkpoint compatibility.
+- `utils/evaluation_results.py`: Saves computed seed-recovery metrics and loads them for the Figure 5F plots.
 
+The corresponding scripts in `Slurm_scripts/` launch data preparation, training and inference jobs on the cluster.
 
+**Shared figure generation and exports**
 
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- `Main_model_loss_curves.ipynb`: Plots the four selected models' training histories for Supplementary Figure 25.
+- `paper_paths.py`: Keeps saved analysis tables and local exploratory files in consistent locations.
+- `figure_generators/main_figures.py`: Lists the main panels, their source notebooks and expected output files.
+- `figure_generators/notebook_runner.py`: Runs the notebook cells needed for each main panel and saves its figures.
+- `figure_generators/public_data.py`: Downloads and extracts the public HF files, checking their recorded checksums.
+- `figure_generators/public_data_manifest.json`: Records the HF dataset revision, filenames and checksums used for reproduction.
+- `figure_generators/public_results.py`: Recomputes the figure measurements using the existing analysis functions and public inputs.
+- `figure_generators/vae_overview.py` and `seed_surrogate.py`: Generate the VAE and seed-to-simulation panels.
+- `figure_generators/regime_surrogate.py` and `data_demand.py`: Generate the simulation-mapping and data-demand panels.
+- `figure_generators/simulation_conditioned_generation.py` and `inverse_decoding.py`: Generate the diffusion and inverse-prediction panels.
+- `figure_exports/vector.py`: Saves plots as PDFs with editable lines and text.
+- `figure_exports/grids.py` and `panels.py`: Save image grids and combined panels while preserving their image resolution.
+- `figure_exports/ssim.py` and `surrogate_panels.py`: Export reconstruction and prediction examples with editable SSIM labels.
+- `figure_exports/export_preprocessing.py`: Exports the preprocessing examples shown in Supplementary Figure 11.
+- `source_data/reference_metrics/`: Contains compact reference values for checking Figures 4D, 5F and 5G.
