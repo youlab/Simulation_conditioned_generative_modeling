@@ -1,4 +1,5 @@
 
+import os
 from diffusers import AutoencoderKL
 import torch
 
@@ -12,7 +13,7 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 
 # first load the VAE
 # was using CompVis/stable-diffusion-v1-4 earlier,  now switching v1-5 to match with ControlNet pipeline 
-vae = AutoencoderKL.from_pretrained("sd-legacy/stable-diffusion-v1-5", subfolder="vae") 
+vae = AutoencoderKL.from_pretrained("sd-legacy/stable-diffusion-v1-5", subfolder="vae", revision=os.environ.get("PATTERN_VAE_REVISION"))
 
 vae.to(device)
 
